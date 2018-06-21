@@ -1,6 +1,7 @@
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
@@ -18,9 +19,6 @@ public class Matrices {
     public Matrices() {
         //instanciar las varibales
         ruta = "matriz.txt";
-        columnas = 20;
-        filas = 31;
-        matriz = new String[filas][columnas];
 
         File archivo = new File(ruta);
         if (archivo.exists()) {
@@ -29,6 +27,9 @@ public class Matrices {
 
             //intentamos leer el archivo
             try {
+                filas=contarFilas(archivo);
+                columnas = 19;
+                matriz = new String[filas][columnas];
                 //INICIO DE LECTURA DEL ARCHIVO DE TEXTO
                 entradas = new BufferedReader(new FileReader(archivo));
                 String linea;
@@ -79,13 +80,12 @@ public class Matrices {
             //leer las celdas
             for (int j = 0; j < columnas; j++) {
                 //System.out.println("CELDA NUMERO: "+j);
-                
+
                 //si es la columna 0 o la fila 0, se muestra tal cual
                 if (i == 0 || j == 0) {
                     System.out.print("[" + matriz[i][j] + "]");
-                }
-                //si no, se opera la celda
-                else{
+                } //si no, se opera la celda
+                else {
                     //float valor = Float.parseFloat(matriz[i][j]);
                     //ejemplo de operacion, multiplicamos por 2 la celda
                     //valor=valor*2;
@@ -94,5 +94,18 @@ public class Matrices {
             }
             System.out.println("\n");
         }
+    }
+
+    //metodo para contar las filas del archivo
+    public int contarFilas(File archivo) throws FileNotFoundException, IOException {
+        BufferedReader entradas = new BufferedReader(new FileReader(archivo));
+
+        int contador = 0;
+
+        while (entradas.ready()) {
+            entradas.readLine();
+            contador++;
+        }
+        return contador;
     }
 }

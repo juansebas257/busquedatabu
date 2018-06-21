@@ -20,6 +20,12 @@ public class Matrices {
         //instanciar las varibales
         ruta = "matriz.txt";
 
+        leerArchivo();
+        primerMatriz();
+    }
+
+    //método para leer el archivo de texto
+    private void leerArchivo() {
         File archivo = new File(ruta);
         if (archivo.exists()) {
             //LEER ARCHIVO PLANO...
@@ -27,7 +33,7 @@ public class Matrices {
 
             //intentamos leer el archivo
             try {
-                filas=contarFilas(archivo);
+                filas = contarFilas(archivo);
                 columnas = 19;
                 matriz = new String[filas][columnas];
                 //INICIO DE LECTURA DEL ARCHIVO DE TEXTO
@@ -40,10 +46,11 @@ public class Matrices {
 
                     //separar la linea por tabulado
                     int contadorFilas = 0;
-                    StringTokenizer st = new StringTokenizer(linea, "\t");
-                    while (st.hasMoreTokens()) {
-                        String celda = st.nextToken();
-                        matriz[contadorColumnas][contadorFilas] = celda + "";
+                    System.out.println("linea:");
+                    System.out.println(linea);
+
+                    for (String celda : linea.split("\\t")) {
+                        matriz[contadorColumnas][contadorFilas] = celda;
                         contadorFilas++;
                     }
                     contadorColumnas++;
@@ -51,8 +58,7 @@ public class Matrices {
                 //FIN DE LECTURA DEL ARCHIVO DE TEXTO
 
                 //mostramos el contenido de la matriz
-                leerMatriz();
-
+                //leerMatriz();
             } catch (IOException en) {
                 //error de lectura del archivo
                 JOptionPane.showMessageDialog(null, "Hubo un error al leer el archivo\n" + en.getMessage());
@@ -70,7 +76,6 @@ public class Matrices {
             JOptionPane.showMessageDialog(null, "El archivo " + ruta + " no existe");
             System.exit(0);
         }
-
     }
 
     public void leerMatriz() {
@@ -92,7 +97,7 @@ public class Matrices {
                     System.out.print("[" + matriz[i][j] + "]");
                 }
             }
-            System.out.println("\n");
+            System.out.println("");
         }
     }
 
@@ -107,5 +112,40 @@ public class Matrices {
             contador++;
         }
         return contador;
+    }
+
+    //metodo para comparar dos maquinas
+    private void primerMatriz() {
+        //leerMatriz();
+        //leer las filas
+        //PENDIENTE: validar cuando la maquina no tega ninguna secuencia
+
+        //contar filas con secuencia 1
+        int filasNuevaMatriz = 0;
+        for (int i = 0; i < filas; i++) {
+            if (matriz[i][3].equals("1")) {
+                filasNuevaMatriz++;
+            }
+        }
+
+        //armar matriz de comparación
+        String[][] matrizComparacion = new String[filasNuevaMatriz][4];
+        filasNuevaMatriz = 0;
+        for (int i = 0; i < filas; i++) {
+            if (matriz[i][3].equals("1")) {
+                matrizComparacion[filasNuevaMatriz][0] = matriz[i][0];
+                matrizComparacion[filasNuevaMatriz][1] = matriz[i][4];
+                //matrizComparacion[0][filasNuevaMatriz] = matriz[i][0];
+                matrizComparacion[filasNuevaMatriz][3] = "SUMA";
+                filasNuevaMatriz++;
+            }
+        }
+
+        for (int i = 0; i < filasNuevaMatriz; i++) {
+            for (int j = 0; j <4 ; j++) {
+                System.out.print("    "+matrizComparacion[i][j]);
+            }
+            System.out.println("");
+        }
     }
 }

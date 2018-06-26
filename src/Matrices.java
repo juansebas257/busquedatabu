@@ -46,7 +46,6 @@ public class Matrices {
 
                     //separar la linea por tabulado
                     int contadorFilas = 0;
-                    System.out.println("linea:");
                     System.out.println(linea);
 
                     for (String celda : linea.split("\\t")) {
@@ -129,14 +128,36 @@ public class Matrices {
         }
 
         //armar matriz de comparación
-        String[][] matrizComparacion = new String[filasNuevaMatriz][4];
-        filasNuevaMatriz = 0;
-        for (int i = 0; i < filas; i++) {
+        String[][] matrizComparacion = new String[filasNuevaMatriz+1][4];
+        //inicializando la matriz en 0
+        for(int i=0;i<filasNuevaMatriz+1;i++){
+            for(int j=0;j<4;j++){
+                matrizComparacion[i][j]="0";
+            }
+        }
+        
+        filasNuevaMatriz = 1;
+        
+        matrizComparacion[0][0]="Item";
+        matrizComparacion[0][1]=matriz[0][1];
+        matrizComparacion[0][2]="Siguiente máquina";
+        matrizComparacion[0][3]="Suma";
+                
+        for (int i = 1; i < filas; i++) {
             if (matriz[i][3].equals("1")) {
                 matrizComparacion[filasNuevaMatriz][0] = matriz[i][0];
-                matrizComparacion[filasNuevaMatriz][1] = matriz[i][4];
-                //matrizComparacion[0][filasNuevaMatriz] = matriz[i][0];
-                matrizComparacion[filasNuevaMatriz][3] = "SUMA";
+                matrizComparacion[filasNuevaMatriz][1] = matriz[i][4].replace(",", ".");
+                
+                //buscar la siguiente maquina de este elemento
+                //buscando en todas las columnas el 2 en esta misma fila
+                for(int j=0;j<filas;j++){
+                    if(matriz[i][j].equals("2")){
+                        matrizComparacion[filasNuevaMatriz][2] = matriz[i][j+1].replace(",", ".");
+                        break;
+                    }
+                }
+                
+                matrizComparacion[filasNuevaMatriz][3] =""+ (Double.parseDouble(matrizComparacion[filasNuevaMatriz][1])+Double.parseDouble(matrizComparacion[filasNuevaMatriz][2]));
                 filasNuevaMatriz++;
             }
         }

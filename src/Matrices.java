@@ -4,29 +4,34 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.StringTokenizer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JOptionPane;
 
 public class Matrices {
 
     //declaramos las variables
-    private String ruta;
+    private String path;
     private int columnas;
     private int filas;
     private String matriz[][];
+    private Map<String,ArrayList> map=new HashMap<>();
 
     //constructor
     public Matrices() {
         //instanciar las varibales
-        ruta = "matriz.txt";
+        path = "matriz.txt";
 
         leerArchivo();
-        primerMatriz();
+        leerMatriz();
+        matrizSecuenciaUno();
+        //leerRutas();
     }
 
     //método para leer el archivo de texto
     private void leerArchivo() {
-        File archivo = new File(ruta);
+        File archivo = new File(path);
         if (archivo.exists()) {
             //LEER ARCHIVO PLANO...
             BufferedReader entradas;
@@ -72,31 +77,71 @@ public class Matrices {
                 }
             }
         } else {
-            JOptionPane.showMessageDialog(null, "El archivo " + ruta + " no existe");
+            JOptionPane.showMessageDialog(null, "El archivo " + path + " no existe");
             System.exit(0);
+        }
+
+        //borrar valores null
+        for (int i = 0; i < columnas; i++) {
+            for (int j = 0; j < filas; j++) {
+                if (matriz[j][i] == null) {
+                    matriz[j][i] = "";
+                }
+            }
         }
     }
 
-    public void leerMatriz() {
+    private void leerMatriz() {
         //leer las filas
         for (int i = 0; i < filas; i++) {
-            //System.out.println("FILA NÚMERO: "+i);
             //leer las celdas
             for (int j = 0; j < columnas; j++) {
-                //System.out.println("CELDA NUMERO: "+j);
-
-                //si es la columna 0 o la fila 0, se muestra tal cual
-                if (i == 0 || j == 0) {
-                    System.out.print("[" + matriz[i][j] + "]");
-                } //si no, se opera la celda
-                else {
-                    //float valor = Float.parseFloat(matriz[i][j]);
-                    //ejemplo de operacion, multiplicamos por 2 la celda
-                    //valor=valor*2;
-                    System.out.print("[" + matriz[i][j] + "]");
+                //nos aseguramos de no leer la primer fila ni la primer columna
+                if(i!=0 && j!=0 && !matriz[i][j].equals("")){
+                    //encontramos una ruta!
+                    Ruta ruta=new Ruta();
+                    ruta.maquina=matriz[0][j];
+                    ruta.codigoPieza=matriz[i][0];
+                    ruta.orden=Integer.parseInt(matriz[i][j]);
+                    ruta.minutos=Float.parseFloat(matriz[i][j+1].replace(",","."));
+                    
+                    
+                    if(map.get(ruta.maquina)==null){
+                        ArrayList<Ruta> rutas=new ArrayList();
+                        map.put(ruta.maquina,rutas);
+                    }
+                    
+                    map.get(ruta.maquina).add(ruta);
+                //nos saltamos el siguiente elemento
+                j++;
                 }
             }
-            System.out.println("");
+        }
+    }
+    
+    public void matrizSecuenciaUno(){
+        for (Map.Entry<String, ArrayList> entry : map.entrySet()){
+            
+            //recorriendo cada maquina mapeada
+            ArrayList<Ruta> array=entry.getValue();
+            
+            System.out.println(entry.getKey() + "/");
+            for(int i=0;i<array.size();i++){
+                //array.get(i).orden=99;
+                System.out.println(array.get(i).maquina+" - "+array.get(i).codigoPieza+" - "+array.get(i).orden+" - "+array.get(i).minutos);
+            }
+        }
+    }
+    
+    public void leerRutas(){
+        System.out.println("LEYENDO RUTAS");
+        for (Map.Entry<String, ArrayList> entry : map.entrySet()){
+            
+            ArrayList<Ruta> array=entry.getValue();
+            
+            for(int i=0;i<array.size();i++){
+            System.out.println(array.get(i).maquina+" - "+array.get(i).codigoPieza+" - "+array.get(i).orden+" - "+array.get(i).minutos);
+            }
         }
     }
 
@@ -111,62 +156,5 @@ public class Matrices {
             contador++;
         }
         return contador;
-    }
-
-    //metodo para comparar dos maquinas
-    private void primerMatriz() {
-        //leerMatriz();
-        //leer las filas
-        //PENDIENTE: validar cuando la maquina no tega ninguna secuencia
-
-        //contar filas con secuencia 1
-        int filasNuevaMatriz = 0;
-        for (int i = 0; i < filas; i++) {
-            if (matriz[i][3].equals("1")) {
-                filasNuevaMatriz++;
-            }
-        }
-
-        //armar matriz de comparación
-        String[][] matrizComparacion = new String[filasNuevaMatriz+1][4];
-        //inicializando la matriz en 0
-        for(int i=0;i<filasNuevaMatriz+1;i++){
-            for(int j=0;j<4;j++){
-                matrizComparacion[i][j]="0";
-            }
-        }
-        
-        filasNuevaMatriz = 1;
-        
-        matrizComparacion[0][0]="Item";
-        matrizComparacion[0][1]=matriz[0][1];
-        matrizComparacion[0][2]="Siguiente máquina";
-        matrizComparacion[0][3]="Suma";
-                
-        for (int i = 1; i < filas; i++) {
-            if (matriz[i][3].equals("1")) {
-                matrizComparacion[filasNuevaMatriz][0] = matriz[i][0];
-                matrizComparacion[filasNuevaMatriz][1] = matriz[i][4].replace(",", ".");
-                
-                //buscar la siguiente maquina de este elemento
-                //buscando en todas las columnas el 2 en esta misma fila
-                for(int j=0;j<filas;j++){
-                    if(matriz[i][j].equals("2")){
-                        matrizComparacion[filasNuevaMatriz][2] = matriz[i][j+1].replace(",", ".");
-                        break;
-                    }
-                }
-                
-                matrizComparacion[filasNuevaMatriz][3] =""+ (Double.parseDouble(matrizComparacion[filasNuevaMatriz][1])+Double.parseDouble(matrizComparacion[filasNuevaMatriz][2]));
-                filasNuevaMatriz++;
-            }
-        }
-
-        for (int i = 0; i < filasNuevaMatriz; i++) {
-            for (int j = 0; j <4 ; j++) {
-                System.out.print("    "+matrizComparacion[i][j]);
-            }
-            System.out.println("");
-        }
     }
 }

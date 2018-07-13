@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -20,10 +21,14 @@ import javax.swing.table.DefaultTableModel;
  * @author sebastian
  */
 public class Ventana extends JFrame {
+    String matrizContent;
 
-    public Ventana(Map<String, ArrayList> map) {
+    public Ventana(Map<String, ArrayList> map,String matrizContent) {
+        this.matrizContent=matrizContent;
 
         JTabbedPane tabs = new JTabbedPane();
+        tabs.addTab("Matriz", new JScrollPane(new JTextArea(matrizContent)));
+        
         for (Map.Entry<String, ArrayList> entry : map.entrySet()) {
             ArrayList<Ruta> array = entry.getValue();
             
@@ -45,13 +50,14 @@ public class Ventana extends JFrame {
         DefaultTableModel modelo = new DefaultTableModel();
         JTable tabla = new JTable();
         
-        String titulo[]={"Pieza","Orden","Secuencia máquina"};
-        String celdas[][] = new String[array.size()][3];
+        String titulo[]={"Pieza","Orden","Tiempo proceso","Secuencia máquina"};
+        String celdas[][] = new String[array.size()][4];
         
         for(int i=0;i<array.size();i++){
             celdas[i][0]=array.get(i).codigoPieza;
             celdas[i][1]=array.get(i).orden+"";
-            celdas[i][2]=array.get(i).secuenciaMaquina+"";
+            celdas[i][2]=array.get(i).minutos+"";
+            celdas[i][3]=array.get(i).secuenciaMaquina+"";
         }
         
         modelo=new DefaultTableModel(celdas,titulo){public boolean isCellEditable(int row, int column) {return false;}};

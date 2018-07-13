@@ -17,6 +17,7 @@ public class Matrices {
     private int filas;
     private String matriz[][];
     private Map<String, ArrayList> map = new HashMap<>();
+    String matrizContent="";
 
     //constructor
     public Matrices() {
@@ -53,6 +54,7 @@ public class Matrices {
                     //separar la linea por tabulado
                     int contadorFilas = 0;
                     System.out.println(linea);
+                    matrizContent+=linea+"\n";
 
                     for (String celda : linea.split("\\t")) {
                         matriz[contadorColumnas][contadorFilas] = celda;
@@ -214,10 +216,6 @@ public class Matrices {
                 procesarMatrizSecuenciaUno(matriz, maquina,mayor,menor);
                 break;
             }
-            //System.out.println("here 1");
-        }
-        if (contador != 999999f) {
-            //procesarMatrizSecuenciaUno(matriz, maquina);
         }
     }
 
@@ -235,6 +233,6 @@ public class Matrices {
     }
 
     private void mostrarExcel() {
-        new Ventana(map);
+        new Ventana(map,matrizContent);
     }
 }
